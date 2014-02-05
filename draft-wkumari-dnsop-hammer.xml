@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2119 PUBLIC "" ".//reference.RFC.2119.xml">
+]>
+<!-- WK: Set category, IPR, docName -->
+<rfc category="info" docName="draft-wkumari-dnsop-hammer-00" ipr="trust200902">
+  <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+
+  <?rfc toc="yes" ?>
+
+  <?rfc symrefs="yes" ?>
+
+  <?rfc sortrefs="yes"?>
+
+  <?rfc iprnotified="no" ?>
+
+  <?rfc strict="yes"?>
+
+  <?rfc compact="yes" ?>
+
+  <front>
+    <!-- WK: Set long title. -->
+
+    <title abbrev="hammer">Highly Automated Method for Maintaining Expiring
+    Records</title>
+
+    <author fullname="Warren Kumari" initials="W." surname="Kumari">
+      <organization>Google</organization>
+
+      <address>
+        <postal>
+          <street>1600 Amphitheatre Parkway</street>
+
+          <city>Mountain View, CA</city>
+
+          <code>94043</code>
+
+          <country>US</country>
+        </postal>
+
+        <email>warren@kumari.net</email>
+      </address>
+    </author>
+
+    <author fullname="Roy Arends" initials="R." surname="Arends">
+      <organization>Nominet</organization>
+
+      <address>
+        <postal>
+          <street>Edmund Halley Road</street>
+
+          <city>Oxford</city>
+
+          <code>OX4 4DQ</code>
+
+          <country>United Kingdom</country>
+        </postal>
+
+        <email>roy@nominet.org.uk</email>
+      </address>
+    </author>
+
+    <author fullname="Suzanne Woolf" initials="S." surname="Woolf">
+      <organization>Internet Systems Consortium, Inc.</organization>
+
+      <address>
+        <postal>
+          <street>950 Charter Street</street>
+
+          <city>Redwood City, CA</city>
+
+          <code>94063</code>
+
+          <country>US</country>
+        </postal>
+
+        <email>woolf@isc.org</email>
+      </address>
+    </author>
+
+    <date day="1" month="July" year="2013" />
+
+    <area>template</area>
+
+    <workgroup>template</workgroup>
+
+    <abstract>
+      <t>This document describes a simple DNS cache optimization which keeps
+      the most popular records in the DNS cache.</t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section title="Introduction">
+      <t>A recursive DNS resolver may cache a Resource Record (RR) for, at
+      most, the Time To Live (TTL) associated with that record. While the TTL
+      is greater than zero, the resolver may respond to queries from its
+      cache, but once the TTL has reached zero, the resolver flushes the RR.
+      When the resolver gets another query for that resource, it needs to
+      initiate a new query. This is then cached and returned to the querying
+      client. This document proposes an optimization (Highly Automated Method
+      for Maintaining Expiring Records -- (HAMMER)) to help keep popular
+      responses in the cache, by fetching new responses before the TTL
+      expires. It is designed to not require much additional state.</t>
+
+      <t><xref target="I-D.ietf-sidr-iana-objects"></xref> and this is a
+      reference to a draft.</t>
+
+      <section title="Requirements notation">
+        <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+        "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+        document are to be interpreted as described in <xref
+        target="RFC2119"></xref>.</t>
+      </section>
+    </section>
+
+    <section title="Details">
+      <t>When a recursive resolver responds to a client, it either responds
+      from cache, or it initiates an iterative query to resolve the answer,
+      caches the answer and then respond with that answer. Performing
+      iterative queries to resolve the answers takes significant time, and so
+      responding from cache is preferable.</t>
+
+      <t>When a recursive resolver that implements HAMMER receives a query for
+      information that it has in the cache, it responds from the cache. It
+      also checks to see if the remaining TTL on the cached data is less than
+      HAMMER_TIME (described below). If it is, the resolver will initiate a
+      "cache fill" iterative query, just like it would have if the cached data
+      had expired. During this cache fill operation the resolver continues to
+      respond from cache (until the TTL expires). When the cache fill query
+      completes, the new response replaces the existing cached information.
+      This ensure that the cache has fresh data for subsequent queries.</t>
+
+      <t>Since the cache fill query is initiated before the existing cached
+      entry expires (and is flushed), responses will come from the cache more
+      often. This decreases the client resolution latency and improves the
+      user experience.</t>
+
+      <t>As the cache fill resolution is triggered by an incoming query (and
+      only if that query arrives shortly before the record would expire
+      anyway), this effectively keeps the most popular data in the cache,
+      without having to maintain counters in the cache, or proactively resolve
+      responses that are not likely to be needed as often. This is purely an
+      implementation optimization - resolvers always have the option to cache
+      records for less than the TTL (for example, when running low on cache
+      space, etc), this simply triggers a refresh of the RR before it
+      expires.</t>
+
+      <t>If the original TTL of the RR is less than (or close to HAMMER_TIME),
+      the described method could cause excessive cache fill queries to occur.
+      In order to prevent this an additional variable named STOP (described
+      below) is introduced. If the original TTL of the RR is less than STOP *
+      HAMMER_TIME then the cache entry should be marked with a "Can't touch
+      this" flag, and the described method should not be used.</t>
+
+      <t></t>
+
+      <section title="Variables">
+        <t>HAMMER_TIME is the number of seconds before TTL expiration that a
+        cache fill query should be initiated. This should be a user
+        configurable value. A default of 2 seconds is RECOMMENDED.</t>
+
+        <t>STOP should be a user configurable variable. A default of 3 is
+        recommended.</t>
+      </section>
+    </section>
+
+    <section title="IANA Considerations">
+      <t>This document makes no request of the IANA.</t>
+    </section>
+
+    <section title="Security Considerations">
+      <t>This technique leverages existing protocols, and should not introduce
+      any new risks, other than a slight increase in traffic.</t>
+
+      <t>By initiating cache fill entries before the existing RR has expired
+      this technique will slightly increase the number of queries seen by
+      authoritative servers. This increase will be inversely proportional to
+      the average TTL of the records that they serve.</t>
+
+      <t>It is unlikely, but possible that this increase could cause a denial
+      of service condition.</t>
+    </section>
+
+    <section title="Acknowledgements">
+      <t>The authors wish to thank Tony Finch and MC Hammer.</t>
+    </section>
+  </middle>
+
+  <back>
+    <references title="Normative References">
+      <?rfc include='reference.RFC.2119'?>
+
+      <reference anchor="IANA.AS_Numbers"
+                 target="http://www.iana.org/assignments/as-numbers">
+        <front>
+          <title abbrev="Autonomous System (AS) Numbers">Autonomous System
+          (AS) Numbers</title>
+
+          <author>
+            <organization>IANA</organization>
+          </author>
+
+          <date />
+        </front>
+      </reference>
+    </references>
+
+    <references title="Informative References">
+      <?rfc include='reference.I-D.draft-ietf-sidr-iana-objects-03.xml'?>
+    </references>
+
+    <section title="Changes / Author Notes.">
+      <t>[RFC Editor: Please remove this section before publication ]</t>
+
+      <t>From -template to -00.</t>
+
+      <t><list style="symbols">
+          <t>Wrote some text.</t>
+
+          <t>Changed the name.</t>
+        </list></t>
+    </section>
+  </back>
+</rfc>
