@@ -61,20 +61,19 @@
     </author>
 
     <author fullname="Suzanne Woolf" initials="S." surname="Woolf">
-      <organization>Internet Systems Consortium, Inc.</organization>
-
+      
       <address>
         <postal>
-          <street>950 Charter Street</street>
+          <street>39 Dodge St. #317</street>
 
-          <city>Redwood City, CA</city>
+          <city>Beverly, MA</city>
 
-          <code>94063</code>
+          <code>01915</code>
 
           <country>US</country>
         </postal>
 
-        <email>woolf@isc.org</email>
+        <email>suzworldwide@gmail.com</email>
       </address>
     </author>
 
@@ -122,7 +121,7 @@
       cache, but once the TTL has reached zero, the resolver flushes the RR.
       When the resolver gets another query for that resource, it needs to
       initiate a new query. This is then cached and returned to the querying
-      client. This document an optimization (Highly Automated Method for
+      client. This document discusses an optimization (Highly Automated Method for
       Maintaining Expiring Records -- (HAMMER), also known as "prefetch") to
       help keep popular responses in the cache, by fetching new responses
       before the TTL expires. This behavior is triggered by an incoming query,
@@ -141,7 +140,7 @@
           <t hangText="- HAMMER resolver:">A DNS resolver that implements
           HAMMER mechanism.</t>
 
-          <t hangText="- HAMMER FQDN:">A FQDN that is candidate for the HAMMER
+          <t hangText="- HAMMER FQDN:">A FQDN that is a candidate for the HAMMER
           process.</t>
 
           <t hangText="- HAMMER TIME:">TTL Time to consider before triggering
@@ -157,52 +156,52 @@
       <section title="Improving browsing Quality of Experience by reducing response time">
         <t>Any end user querying a fetched FQDN will get the response from the
         cache of the resolver. This provides faster responses, and thus
-        improves the browsing experience of the end user.</t>
+        improves end user experience for browsing and other applications/activities.</t>
 
         <t>Popular FQDNs are highly queried, and end users have high
-        expectations in term of browsing experience for these FQDNs. With
+        expectations in terms of application response for these FQDNs. With
         regular DNS rules, once the FQDN has been flushed from the cache, it
         waits for the next end user to request the FQDN before initiating a
         resolution for this given FQDN with iterative queries. This results in
         at least one end user waiting for this resolution to be performed over
-        the Internet before the response is being sent to him. This may
-        provide a poor browsing experience since DNS response times over the
-        Internet are unpredictable and it provides a response time longer then
+        the Internet before the response is sent to him. This may
+        provide a poor user experience since DNS response times over the
+        Internet are unpredictable at best and it provides a response time longer then
         usual.</t>
 
         <t>In some cases, not only the first end user querying that FQDN may
-        be impacted, but all end users that request the FQDN between the time
+        be impacted, but also other end users that request the FQDN between the time
         the FQDN TTL expires and the time the cache is again filled. In this
-        case, multiple end users are impacted and it may create unnecessary
-        load of the platform. Note that this load is increased by the use of
+        case, the result is impact on multiple end users and possible unnecessary
+        load on the platform. Note that this load is increased by the use of
         DNSSEC since DNSSEC may involve additional resolutions, larger
         payloads, and signature checks.</t>
 
         <t>DNS response time for a resolution over the Internet is highly
-        unpredictable as it depends on the network congestion, and the
-        servers' availability. Links share their bandwidth, so heavy loaded
-        links result in higher response time. Loaded switches or routers may
-        results in packet drop, which requires the resolver to notice the
-        packet has been dropped (usually with a time out) and restart the
-        iterative resolution. These issues are increased by the use of DNSSEC
-        which makes response time larger as DNS packets are larger. Similarly,
+        unpredictable as it depends on network congestion and servers' availability. 
+        Links share their bandwidth, so heavily loaded links result in higher response 
+        time, regardless of whether the congestion occurs close to the resolver, close 
+        to the client, or close to the authoritative servers. Loaded switches or routers 
+        may result in packet drop, which requires the resolver to notice the packet has 
+        been dropped (usually with a time out) and restart the iterative resolution. These 
+        issues are increased by the use of DNSSEC which makes DNS packets larger. Similarly,
         loaded servers have longer response times.</t>
       </section>
 
       <section title="Optimize the resources involved in large DNSSEC resolving platforms">
         <t>Large resolving platforms are often composed of a set of
         independent resolving nodes. The traffic is usually load balanced
-        based on the IP addresses. This results in most popular FQDNs being
+        based on the query source IP addresses. This results in most popular FQDNs being
         resolved independently by all nodes. First this increases the number
-        of end users who experience a poor browsing experience. Also, when
+        of end users who may experience unnecessary latency. Also, when
         DNSSEC is used, all nodes independently perform signature check
-        operations, possibly resulting in high loads on the authorative
+        operations, possibly resulting in high loads on the authoritative
         server. </t>
 
         <t>The challenge these large DNSSEC resolving platforms have to
         overcome is to provide a uniform distribution of the nodes given that
         end user and FQDNs do not have a uniform distribution of the
-        resources. More specifically, FQDNs and end users usually present a
+        resources. More specifically, FQDNs and end users usually present
         Zipf popularity distributions, which means that most of the traffic is
         performed by a small set of end users and by a small set of FQDNs.</t>
 
@@ -226,7 +225,7 @@
       </section>
     </section>
 
-    <section title="Overview">
+    <section title="Overview of Operation">
       <t>When an incoming query is received, and the result is in the cache,
       the query is answered from the cache. If the remaining TTL of the record
       is below some threshold, the recursive server will also initiate a cache
@@ -234,9 +233,8 @@
 
       <t>The fact that the behavior is triggered by an incoming query (and not
       by periodically scanning the cache and refreshing all entries that are
-      about to expire) causes this behavior to allow unpopular names to age
-      out of the cache naturally, while keeping popular entries in the
-      cache.</t>
+      about to expire) allows unpopular names to age out of the cache naturally, 
+      while keeping popular entries in the cache.</t>
     </section>
 
     <section title="Known implementations">
@@ -248,7 +246,7 @@
       (they use a percentage of TTL, instead of a number of seconds). Then we
       heard from OpenDNS that they *also* implement something similar. Then we
       had a number of discussions, then got sidetracked into other things.
-      Anyway, BIND as of 9.10, around Fed 2014 now implements something like
+      Anyway, BIND as of 9.10, around Feb 2014 now implements something like
       this
       (https://deepthought.isc.org/article/AA-01122/0/Early-refresh-of-cache-records-cache-prefetch-in-BIND-9.10.html),
       and enables it by default. Unfortunately, while BIND uses the times
@@ -264,7 +262,7 @@
 
       <t>A number of recursive resolvers implement techniques similar to the
       techniques described in this document. This section documents some of
-      these.</t>
+      these and tradeoffs they make in picking their techniques.</t>
 
       <section title="Unbound (NLNet Labs)">
         <t>The Unbound validating, recursive, and caching DNS resolver
@@ -378,10 +376,10 @@
             <t hangText="- HAMMER_MATCH:">should be a user configurable
             variable. It defines FQDNs that are expected to implement HAMMER.
             This rule can be expressed in different ways. It can be a list of
-            FQDNs, a number indicating the number of most popular FQDNs that
+            FQDNs, or a number indicating the number of most popular FQDNs that
             needs to be considered. How HAMMER_MATCH is expressed is
             implementation dependent. Implementations can use a list of FQDNs,
-            other can use a matching rule on the FQDNs, or define the
+            others can use a matching rule on the FQDNs, or define the
             HAMMER_FQDNs as the X most popular FQDNs.</t>
 
             <t hangText="- HAMMER_FORWARDER:">should be a user configurable
