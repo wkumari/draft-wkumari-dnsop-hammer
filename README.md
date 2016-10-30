@@ -7,16 +7,16 @@
 template                                                       W. Kumari
 Internet-Draft                                                    Google
 Intended status: Informational                                 R. Arends
-Expires: January 5, 2015                                         Nominet
+Expires: May 3, 2017                                             Nominet
                                                                 S. Woolf
 
                                                               D. Migault
                                                                   Orange
-                                                            July 4, 2014
+                                                        October 30, 2016
 
 
         Highly Automated Method for Maintaining Expiring Records
-                     draft-wkumari-dnsop-hammer-01
+                     draft-wkumari-dnsop-hammer-02
 
 Abstract
 
@@ -45,19 +45,19 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 5, 2015.
+   This Internet-Draft will expire on May 3, 2017.
 
 Copyright Notice
 
-   Copyright (c) 2014 IETF Trust and the persons identified as the
+   Copyright (c) 2016 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
 
 
 
-Kumari, et al.           Expires January 5, 2015                [Page 1]
+Kumari, et al.             Expires May 3, 2017                  [Page 1]
 
-Internet-Draft                   hammer                        July 2014
+Internet-Draft                   hammer                     October 2016
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -80,9 +80,9 @@ Table of Contents
            response time . . . . . . . . . . . . . . . . . . . . . .   3
      3.2.  Optimize the resources involved in large DNSSEC resolving
            platforms . . . . . . . . . . . . . . . . . . . . . . . .   4
-   4.  Overview of Operation . . . . . . . . . . . . . . . . . . . .   5
+   4.  Overview of Operation . . . . . . . . . . . . . . . . . . . .   4
    5.  Known implementations . . . . . . . . . . . . . . . . . . . .   5
-     5.1.  Unbound (NLNet Labs)  . . . . . . . . . . . . . . . . . .   6
+     5.1.  Unbound (NLNet Labs)  . . . . . . . . . . . . . . . . . .   5
      5.2.  OpenDNS . . . . . . . . . . . . . . . . . . . . . . . . .   6
      5.3.  ISC BIND  . . . . . . . . . . . . . . . . . . . . . . . .   6
    6.  An example  / reference implementation  . . . . . . . . . . .   6
@@ -90,9 +90,9 @@ Table of Contents
    7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
    8.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
    9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   8
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .   9
-     10.2.  Informative References . . . . . . . . . . . . . . . . .   9
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .   8
+     10.2.  Informative References . . . . . . . . . . . . . . . . .   8
    Appendix A.  Changes / Author Notes.  . . . . . . . . . . . . . .   9
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   9
 
@@ -101,7 +101,7 @@ Table of Contents
    A recursive DNS resolver may cache a Resource Record (RR) for, at
    most, the Time To Live (TTL) associated with that record.  While the
    TTL is greater than zero, the resolver may respond to queries from
-   its cache, but once the TTL has reached zero, the resolver flushes
+   its cache; but once the TTL has reached zero, the resolver flushes
    the RR.  When the resolver gets another query for that resource, it
    needs to initiate a new query.  This is then cached and returned to
    the querying client.  This document discusses an optimization (Highly
@@ -111,13 +111,13 @@ Table of Contents
 
 
 
-Kumari, et al.           Expires January 5, 2015                [Page 2]
+Kumari, et al.             Expires May 3, 2017                  [Page 2]
 
-Internet-Draft                   hammer                        July 2014
+Internet-Draft                   hammer                     October 2016
 
 
-   triggered by an incoming query, and only shortly before the cache
-   entry was due to expire.
+   triggered by an incoming query that arrives only shortly before the
+   cache entry was due to expire.
 
 1.1.  Requirements notation
 
@@ -143,20 +143,20 @@ Internet-Draft                   hammer                        July 2014
 3.1.  Improving browsing Quality of Experience by reducing response time
 
    Any end user querying a fetched FQDN will get the response from the
-   cache of the resolver.  This provides faster responses, and thus
-   improves end user experience for browsing and other applications/
-   activities.
+   cache of the resolver.  This provides faster responses, thus
+   improving the end user experience for browsing and other
+   applications/activities.
 
    Popular FQDNs are highly queried, and end users have high
-   expectations in terms of application response for these FQDNs.  With
-   regular DNS rules, once the FQDN has been flushed from the cache, it
-   waits for the next end user to request the FQDN before initiating a
-   resolution for this given FQDN with iterative queries.  This results
-   in at least one end user waiting for this resolution to be performed
-   over the Internet before the response is sent to him.  This may
-   provide a poor user experience since DNS response times over the
-   Internet are unpredictable at best and it provides a response time
-   longer then usual.
+   expectations in terms of application responsiveness for these FQDNs.
+   With regular DNS rules, once the FQDN has been flushed from the
+   cache, it waits for the next end user to request the FQDN before
+   initiating a resolution for this given FQDN with iterative queries.
+   This results in at least one end user waiting for this resolution to
+   be performed over the Internet before the response is sent to them.
+   This may provide a poor user experience since DNS response times over
+   the Internet are unpredictable at best and it provides a response
+   time longer then usual.
 
    In some cases, not only the first end user querying that FQDN may be
    impacted, but also other end users that request the FQDN between the
@@ -167,25 +167,13 @@ Internet-Draft                   hammer                        July 2014
 
 
 
-Kumari, et al.           Expires January 5, 2015                [Page 3]
+Kumari, et al.             Expires May 3, 2017                  [Page 3]
 
-Internet-Draft                   hammer                        July 2014
+Internet-Draft                   hammer                     October 2016
 
 
    by the use of DNSSEC since DNSSEC may involve additional resolutions,
    larger payloads, and signature checks.
-
-   DNS response time for a resolution over the Internet is highly
-   unpredictable as it depends on network congestion and servers'
-   availability.  Links share their bandwidth, so heavily loaded links
-   result in higher response time, regardless of whether the congestion
-   occurs close to the resolver, close to the client, or close to the
-   authoritative servers.  Loaded switches or routers may result in
-   packet drop, which requires the resolver to notice the packet has
-   been dropped (usually with a time out) and restart the iterative
-   resolution.  These issues are increased by the use of DNSSEC which
-   makes DNS packets larger.  Similarly, loaded servers have longer
-   response times.
 
 3.2.  Optimize the resources involved in large DNSSEC resolving
       platforms
@@ -193,11 +181,10 @@ Internet-Draft                   hammer                        July 2014
    Large resolving platforms are often composed of a set of independent
    resolving nodes.  The traffic is usually load balanced based on the
    query source IP addresses.  This results in most popular FQDNs being
-   resolved independently by all nodes.  First this increases the number
-   of end users who may experience unnecessary latency.  Also, when
-   DNSSEC is used, all nodes independently perform signature check
-   operations, possibly resulting in high loads on the authoritative
-   server.
+   resolved independently by all nodes.  This increases the number of
+   end users who may experience unnecessary latency.  Also, when DNSSEC
+   is used, all nodes independently perform signature check operations,
+   possibly resulting in high loads on the authoritative server.
 
    The challenge these large DNSSEC resolving platforms have to overcome
    is to provide a uniform distribution of the nodes given that end user
@@ -219,15 +206,6 @@ Internet-Draft                   hammer                        July 2014
    FQDNs' popularity.  In fact, a few number of FQDNs can be cached (a
    few thousands) to address most of the traffic (up to 70%).
 
-
-
-
-
-Kumari, et al.           Expires January 5, 2015                [Page 4]
-
-Internet-Draft                   hammer                        July 2014
-
-
    Note that to perform a single resolution for the global platform,
    nodes may be configured as forwarders for the most popular FQDNs
 
@@ -241,6 +219,15 @@ Internet-Draft                   hammer                        July 2014
 
    The fact that the behavior is triggered by an incoming query (and not
    by periodically scanning the cache and refreshing all entries that
+
+
+
+
+Kumari, et al.             Expires May 3, 2017                  [Page 4]
+
+Internet-Draft                   hammer                     October 2016
+
+
    are about to expire) allows unpopular names to age out of the cache
    naturally, while keeping popular entries in the cache.
 
@@ -273,17 +260,6 @@ Internet-Draft                   hammer                        July 2014
    techniques described in this document.  This section documents some
    of these and tradeoffs they make in picking their techniques.
 
-
-
-
-
-
-
-Kumari, et al.           Expires January 5, 2015                [Page 5]
-
-Internet-Draft                   hammer                        July 2014
-
-
 5.1.  Unbound (NLNet Labs)
 
    The Unbound validating, recursive, and caching DNS resolver
@@ -295,6 +271,18 @@ Internet-Draft                   hammer                        July 2014
    [Ed: Unbound's "prefetch" function was developed independently,
    before this draft was written.  The authors were unaware of it when
    writing the document.]
+
+
+
+
+
+
+
+
+Kumari, et al.             Expires May 3, 2017                  [Page 5]
+
+Internet-Draft                   hammer                     October 2016
+
 
 5.2.  OpenDNS
 
@@ -328,18 +316,10 @@ Internet-Draft                   hammer                        July 2014
    If the HAMMER FQDN has already been fetched or provisioned) then
    nothing is done.
 
-   If the HAMMER FQDN has not yet been fetched and the TTL is less then
+   If the HAMMER FQDN has not yet been fetched and the TTL is less than
    the HAMMER_TIME, the HAMMER resolver starts a resolution for the
    queried FQDN in order to fill the cache, just as if the TTL had
    expired.  During this cache fill operation the resolver continues to
-
-
-
-Kumari, et al.           Expires January 5, 2015                [Page 6]
-
-Internet-Draft                   hammer                        July 2014
-
-
    respond from cache (until the TTL expires).  When the cache fill
    query completes, the new response replaces the existing cached
    information.  This ensures the cache has fresh data for subsequent
@@ -352,6 +332,14 @@ Internet-Draft                   hammer                        July 2014
 
    The cache fill resolution is triggered by an incoming query (and only
    if that query arrives shortly before the record would expire anyway).
+
+
+
+Kumari, et al.             Expires May 3, 2017                  [Page 6]
+
+Internet-Draft                   hammer                     October 2016
+
+
    This effectively keeps the most popular data uniformly queried in the
    cache, without having to maintain counters in the cache or
    proactively resolve responses that are not likely to be needed as
@@ -386,16 +374,6 @@ Internet-Draft                   hammer                        July 2014
 
    These are the mandatory variables:
 
-
-
-
-
-
-Kumari, et al.           Expires January 5, 2015                [Page 7]
-
-Internet-Draft                   hammer                        July 2014
-
-
    - HAMMER_TIME:  is the number of seconds before TTL expiration that a
          cache fill query should be initiated.  This should be a user
          configurable value.  A default of 2 seconds is RECOMMENDED.
@@ -410,6 +388,14 @@ Internet-Draft                   hammer                        July 2014
          FQDNs that are expected to implement HAMMER.  This rule can be
          expressed in different ways.  It can be a list of FQDNs, or a
          number indicating the number of most popular FQDNs that needs
+
+
+
+Kumari, et al.             Expires May 3, 2017                  [Page 7]
+
+Internet-Draft                   hammer                     October 2016
+
+
          to be considered.  How HAMMER_MATCH is expressed is
          implementation dependent.  Implementations can use a list of
          FQDNs, others can use a matching rule on the FQDNs, or define
@@ -433,7 +419,7 @@ Internet-Draft                   hammer                        July 2014
    authoritative servers.  This increase will be inversely proportional
    to the average TTL of the records that they serve.
 
-   It is unlikely, but possible that this increase could cause a denial
+   It is unlikely, but possible, that this increase could cause a denial
    of service condition.
 
 9.  Acknowledgements
@@ -442,15 +428,7 @@ Internet-Draft                   hammer                        July 2014
    thank Brian Somers and Wouter Wijngaards for telling us that they
    already do this :-) (They should probably be co-authors, but I left
    this too close to the draft cutoff time to confirm with them that
-   they are willing to have thier names on this).
-
-
-
-
-Kumari, et al.           Expires January 5, 2015                [Page 8]
-
-Internet-Draft                   hammer                        July 2014
-
+   they are willing to have their names on this).
 
 10.  References
 
@@ -463,6 +441,17 @@ Internet-Draft                   hammer                        July 2014
 
 10.2.  Informative References
 
+
+
+
+
+
+
+Kumari, et al.             Expires May 3, 2017                  [Page 8]
+
+Internet-Draft                   hammer                     October 2016
+
+
    [I-D.ietf-sidr-iana-objects]
               Manderson, T., Vegoda, L., and S. Kent, "RPKI Objects
               issued by IANA", draft-ietf-sidr-iana-objects-03 (work in
@@ -471,6 +460,13 @@ Internet-Draft                   hammer                        July 2014
 Appendix A.  Changes / Author Notes.
 
    [RFC Editor: Please remove this section before publication ]
+
+   From -01 to -02:
+
+   o  Readbility / cleanup.
+
+   o  Tried to make it more clear that most implementations now support
+      this (although they call it "prefetch" )
 
    From -00 to 01:
 
@@ -503,9 +499,13 @@ Authors' Addresses
 
 
 
-Kumari, et al.           Expires January 5, 2015                [Page 9]
+
+
+
+
+Kumari, et al.             Expires May 3, 2017                  [Page 9]
 
-Internet-Draft                   hammer                        July 2014
+Internet-Draft                   hammer                     October 2016
 
 
    Roy Arends
@@ -559,5 +559,5 @@ Internet-Draft                   hammer                        July 2014
 
 
 
-Kumari, et al.           Expires January 5, 2015               [Page 10]
+Kumari, et al.             Expires May 3, 2017                 [Page 10]
 ```

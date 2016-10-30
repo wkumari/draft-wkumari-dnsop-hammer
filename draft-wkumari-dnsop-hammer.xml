@@ -3,7 +3,7 @@
 <!ENTITY rfc2119 PUBLIC "" ".//reference.RFC.2119.xml">
 ]>
 <!-- WK: Set category, IPR, docName -->
-<rfc category="info" docName="draft-wkumari-dnsop-hammer-01" ipr="trust200902">
+<rfc category="info" docName="draft-wkumari-dnsop-hammer-02" ipr="trust200902">
   <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
   <?rfc toc="yes" ?>
@@ -61,7 +61,6 @@
     </author>
 
     <author fullname="Suzanne Woolf" initials="S." surname="Woolf">
-      
       <address>
         <postal>
           <street>39 Dodge St. #317</street>
@@ -95,7 +94,7 @@
       </address>
     </author>
 
-    <date day="4" month="July" year="2014"/>
+    <date day="30" month="October" year="2016"/>
 
     <area>template</area>
 
@@ -118,14 +117,14 @@
       <t>A recursive DNS resolver may cache a Resource Record (RR) for, at
       most, the Time To Live (TTL) associated with that record. While the TTL
       is greater than zero, the resolver may respond to queries from its
-      cache, but once the TTL has reached zero, the resolver flushes the RR.
+      cache; but once the TTL has reached zero, the resolver flushes the RR.
       When the resolver gets another query for that resource, it needs to
       initiate a new query. This is then cached and returned to the querying
-      client. This document discusses an optimization (Highly Automated Method for
-      Maintaining Expiring Records -- (HAMMER), also known as "prefetch") to
-      help keep popular responses in the cache, by fetching new responses
-      before the TTL expires. This behavior is triggered by an incoming query,
-      and only shortly before the cache entry was due to expire.</t>
+      client. This document discusses an optimization (Highly Automated Method
+      for Maintaining Expiring Records -- (HAMMER), also known as "prefetch")
+      to help keep popular responses in the cache, by fetching new responses
+      before the TTL expires. This behavior is triggered by an incoming query
+      that arrives only shortly before the cache entry was due to expire.</t>
 
       <section title="Requirements notation">
         <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -140,8 +139,8 @@
           <t hangText="- HAMMER resolver:">A DNS resolver that implements
           HAMMER mechanism.</t>
 
-          <t hangText="- HAMMER FQDN:">A FQDN that is a candidate for the HAMMER
-          process.</t>
+          <t hangText="- HAMMER FQDN:">A FQDN that is a candidate for the
+          HAMMER process.</t>
 
           <t hangText="- HAMMER TIME:">TTL Time to consider before triggering
           the HAMMER mechanism.</t>
@@ -155,54 +154,45 @@
 
       <section title="Improving browsing Quality of Experience by reducing response time">
         <t>Any end user querying a fetched FQDN will get the response from the
-        cache of the resolver. This provides faster responses, and thus
-        improves end user experience for browsing and other applications/activities.</t>
+        cache of the resolver. This provides faster responses, thus improving
+        the end user experience for browsing and other
+        applications/activities.</t>
 
         <t>Popular FQDNs are highly queried, and end users have high
-        expectations in terms of application response for these FQDNs. With
-        regular DNS rules, once the FQDN has been flushed from the cache, it
-        waits for the next end user to request the FQDN before initiating a
+        expectations in terms of application responsiveness for these FQDNs.
+        With regular DNS rules, once the FQDN has been flushed from the cache,
+        it waits for the next end user to request the FQDN before initiating a
         resolution for this given FQDN with iterative queries. This results in
         at least one end user waiting for this resolution to be performed over
-        the Internet before the response is sent to him. This may
-        provide a poor user experience since DNS response times over the
-        Internet are unpredictable at best and it provides a response time longer then
+        the Internet before the response is sent to them. This may provide a
+        poor user experience since DNS response times over the Internet are
+        unpredictable at best and it provides a response time longer then
         usual.</t>
 
         <t>In some cases, not only the first end user querying that FQDN may
-        be impacted, but also other end users that request the FQDN between the time
-        the FQDN TTL expires and the time the cache is again filled. In this
-        case, the result is impact on multiple end users and possible unnecessary
-        load on the platform. Note that this load is increased by the use of
-        DNSSEC since DNSSEC may involve additional resolutions, larger
-        payloads, and signature checks.</t>
-
-        <t>DNS response time for a resolution over the Internet is highly
-        unpredictable as it depends on network congestion and servers' availability. 
-        Links share their bandwidth, so heavily loaded links result in higher response 
-        time, regardless of whether the congestion occurs close to the resolver, close 
-        to the client, or close to the authoritative servers. Loaded switches or routers 
-        may result in packet drop, which requires the resolver to notice the packet has 
-        been dropped (usually with a time out) and restart the iterative resolution. These 
-        issues are increased by the use of DNSSEC which makes DNS packets larger. Similarly,
-        loaded servers have longer response times.</t>
+        be impacted, but also other end users that request the FQDN between
+        the time the FQDN TTL expires and the time the cache is again filled.
+        In this case, the result is impact on multiple end users and possible
+        unnecessary load on the platform. Note that this load is increased by
+        the use of DNSSEC since DNSSEC may involve additional resolutions,
+        larger payloads, and signature checks.</t>
       </section>
 
       <section title="Optimize the resources involved in large DNSSEC resolving platforms">
         <t>Large resolving platforms are often composed of a set of
         independent resolving nodes. The traffic is usually load balanced
-        based on the query source IP addresses. This results in most popular FQDNs being
-        resolved independently by all nodes. First this increases the number
-        of end users who may experience unnecessary latency. Also, when
+        based on the query source IP addresses. This results in most popular
+        FQDNs being resolved independently by all nodes. This increases the
+        number of end users who may experience unnecessary latency. Also, when
         DNSSEC is used, all nodes independently perform signature check
         operations, possibly resulting in high loads on the authoritative
-        server. </t>
+        server.</t>
 
         <t>The challenge these large DNSSEC resolving platforms have to
         overcome is to provide a uniform distribution of the nodes given that
         end user and FQDNs do not have a uniform distribution of the
-        resources. More specifically, FQDNs and end users usually present
-        Zipf popularity distributions, which means that most of the traffic is
+        resources. More specifically, FQDNs and end users usually present Zipf
+        popularity distributions, which means that most of the traffic is
         performed by a small set of end users and by a small set of FQDNs.</t>
 
         <t>DNS and large resolving DNS platforms have resulted in uniformly
@@ -221,7 +211,7 @@
         <t>Note that to perform a single resolution for the global platform,
         nodes may be configured as forwarders for the most popular FQDNs</t>
 
-        <t> </t>
+        <t/>
       </section>
     </section>
 
@@ -229,12 +219,12 @@
       <t>When an incoming query is received, and the result is in the cache,
       the query is answered from the cache. If the remaining TTL of the record
       is below some threshold, the recursive server will also initiate a cache
-      fill operation in the background to refresh the cache entry. </t>
+      fill operation in the background to refresh the cache entry.</t>
 
       <t>The fact that the behavior is triggered by an incoming query (and not
       by periodically scanning the cache and refreshing all entries that are
-      about to expire) allows unpopular names to age out of the cache naturally, 
-      while keeping popular entries in the cache.</t>
+      about to expire) allows unpopular names to age out of the cache
+      naturally, while keeping popular entries in the cache.</t>
     </section>
 
     <section title="Known implementations">
@@ -273,12 +263,12 @@
 
         <t>[Ed: Unbound's "prefetch" function was developed independently,
         before this draft was written. The authors were unaware of it when
-        writing the document.] </t>
+        writing the document.]</t>
       </section>
 
       <section title="OpenDNS">
         <t>The public DNS resolver, OpenDNS implements a prefetch like
-        solution. </t>
+        solution.</t>
 
         <t>[Ed: Will work with OpenDNS to get more details.]</t>
       </section>
@@ -313,7 +303,7 @@
       <t>If the HAMMER FQDN has already been fetched or provisioned) then
       nothing is done.</t>
 
-      <t>If the HAMMER FQDN has not yet been fetched and the TTL is less then
+      <t>If the HAMMER FQDN has not yet been fetched and the TTL is less than
       the HAMMER_TIME, the HAMMER resolver starts a resolution for the queried
       FQDN in order to fill the cache, just as if the TTL had expired. During
       this cache fill operation the resolver continues to respond from cache
@@ -376,8 +366,8 @@
             <t hangText="- HAMMER_MATCH:">should be a user configurable
             variable. It defines FQDNs that are expected to implement HAMMER.
             This rule can be expressed in different ways. It can be a list of
-            FQDNs, or a number indicating the number of most popular FQDNs that
-            needs to be considered. How HAMMER_MATCH is expressed is
+            FQDNs, or a number indicating the number of most popular FQDNs
+            that needs to be considered. How HAMMER_MATCH is expressed is
             implementation dependent. Implementations can use a list of FQDNs,
             others can use a matching rule on the FQDNs, or define the
             HAMMER_FQDNs as the X most popular FQDNs.</t>
@@ -402,7 +392,7 @@
       authoritative servers. This increase will be inversely proportional to
       the average TTL of the records that they serve.</t>
 
-      <t>It is unlikely, but possible that this increase could cause a denial
+      <t>It is unlikely, but possible, that this increase could cause a denial
       of service condition.</t>
     </section>
 
@@ -411,7 +401,7 @@
       thank Brian Somers and Wouter Wijngaards for telling us that they
       already do this :-) (They should probably be co-authors, but I left this
       too close to the draft cutoff time to confirm with them that they are
-      willing to have thier names on this).</t>
+      willing to have their names on this).</t>
     </section>
   </middle>
 
@@ -427,9 +417,14 @@
     <section title="Changes / Author Notes.">
       <t>[RFC Editor: Please remove this section before publication ]</t>
 
-      <t>From -00 to 01:</t>
+      <t>From -01 to -02:<list style="symbols">
+          <t>Readbility / cleanup.</t>
 
-      <t><list style="symbols">
+          <t>Tried to make it more clear that most implementations now support
+          this (although they call it "prefetch" )</t>
+        </list></t>
+
+      <t>From -00 to 01:<list style="symbols">
           <t>Fairly large rewrite.</t>
 
           <t>Added text on the fact that there are implmentations that do
