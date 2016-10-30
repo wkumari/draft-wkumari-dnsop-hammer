@@ -4,7 +4,7 @@
 
 
 
-template                                                       W. Kumari
+Network Working Group                                          W. Kumari
 Internet-Draft                                                    Google
 Intended status: Informational                                 R. Arends
 Expires: May 3, 2017                                             Nominet
@@ -127,11 +127,11 @@ Internet-Draft                   hammer                     October 2016
 
 2.  Terminology
 
-   - HAMMER resolver:  A DNS resolver that implements HAMMER mechanism.
+   HAMMER resolver:  A DNS resolver that implements HAMMER mechanism.
 
-   - HAMMER FQDN:  A FQDN that is a candidate for the HAMMER process.
+   HAMMER FQDN:  A FQDN that is a candidate for the HAMMER process.
 
-   - HAMMER TIME:  TTL Time to consider before triggering the HAMMER
+   HAMMER TIME:  TTL Time to consider before triggering the HAMMER
          mechanism.
 
 3.  Motivations
@@ -374,17 +374,17 @@ Internet-Draft                   hammer                     October 2016
 
    These are the mandatory variables:
 
-   - HAMMER_TIME:  is the number of seconds before TTL expiration that a
+   HAMMER_TIME:  is the number of seconds before TTL expiration that a
          cache fill query should be initiated.  This should be a user
          configurable value.  A default of 2 seconds is RECOMMENDED.
 
-   - STOP:  should be a user configurable variable.  A default of 3 is
+   STOP: should be a user configurable variable.  A default of 3 is
          recommended.
 
    Implementations may consider additional variables.  These are not
    mandatory but would address specific use of the HAMMER.
 
-   - HAMMER_MATCH:  should be a user configurable variable.  It defines
+   HAMMER_MATCH:  should be a user configurable variable.  It defines
          FQDNs that are expected to implement HAMMER.  This rule can be
          expressed in different ways.  It can be a list of FQDNs, or a
          number indicating the number of most popular FQDNs that needs
@@ -401,7 +401,7 @@ Internet-Draft                   hammer                     October 2016
          FQDNs, others can use a matching rule on the FQDNs, or define
          the HAMMER_FQDNs as the X most popular FQDNs.
 
-   - HAMMER_FORWARDER:  should be a user configurable variable.  It is
+   HAMMER_FORWARDER:  should be a user configurable variable.  It is
          optional and designates the DNS server the resolver forwards
          the request to.
 

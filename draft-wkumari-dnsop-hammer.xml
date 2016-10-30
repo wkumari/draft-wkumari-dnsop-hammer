@@ -96,10 +96,6 @@
 
     <date day="30" month="October" year="2016"/>
 
-    <area>template</area>
-
-    <workgroup>template</workgroup>
-
     <abstract>
       <t>This document describes a simple DNS cache optimization which keeps
       the most popular records in the DNS cache: Highly Automated Method for
@@ -136,13 +132,13 @@
 
     <section title="Terminology">
       <t><list hangIndent="6" style="hanging">
-          <t hangText="- HAMMER resolver:">A DNS resolver that implements
-          HAMMER mechanism.</t>
+          <t hangText="HAMMER resolver:">A DNS resolver that implements HAMMER
+          mechanism.</t>
 
-          <t hangText="- HAMMER FQDN:">A FQDN that is a candidate for the
-          HAMMER process.</t>
+          <t hangText="HAMMER FQDN:">A FQDN that is a candidate for the HAMMER
+          process.</t>
 
-          <t hangText="- HAMMER TIME:">TTL Time to consider before triggering
+          <t hangText="HAMMER TIME:">TTL Time to consider before triggering
           the HAMMER mechanism.</t>
         </list></t>
     </section>
@@ -351,19 +347,19 @@
       <section title="Variables">
         <t>These are the mandatory variables: <list hangIndent="6"
             style="hanging">
-            <t hangText="- HAMMER_TIME:">is the number of seconds before TTL
+            <t hangText="HAMMER_TIME:">is the number of seconds before TTL
             expiration that a cache fill query should be initiated. This
             should be a user configurable value. A default of 2 seconds is
             RECOMMENDED.</t>
 
-            <t hangText="- STOP:">should be a user configurable variable. A
+            <t hangText="STOP:">should be a user configurable variable. A
             default of 3 is recommended.</t>
           </list></t>
 
         <t>Implementations may consider additional variables. These are not
         mandatory but would address specific use of the HAMMER. <list
             hangIndent="6" style="hanging">
-            <t hangText="- HAMMER_MATCH:">should be a user configurable
+            <t hangText="HAMMER_MATCH:">should be a user configurable
             variable. It defines FQDNs that are expected to implement HAMMER.
             This rule can be expressed in different ways. It can be a list of
             FQDNs, or a number indicating the number of most popular FQDNs
@@ -372,7 +368,7 @@
             others can use a matching rule on the FQDNs, or define the
             HAMMER_FQDNs as the X most popular FQDNs.</t>
 
-            <t hangText="- HAMMER_FORWARDER:">should be a user configurable
+            <t hangText="HAMMER_FORWARDER:">should be a user configurable
             variable. It is optional and designates the DNS server the
             resolver forwards the request to.</t>
           </list></t>
