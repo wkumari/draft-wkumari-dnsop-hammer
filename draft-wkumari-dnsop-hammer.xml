@@ -34,16 +34,9 @@
     </author>
 
     <author fullname="Roy Arends" initials="R." surname="Arends">
-      <organization>Nominet</organization>
-
+      <organization>ICANN</organization>
       <address>
-        <postal>
-          <street>Edmund Halley Road</street>
-          <city>Oxford</city>
-          <code>OX4 4DQ</code>
-          <country>United Kingdom</country>
-        </postal>
-        <email>roy@nominet.org.uk</email>
+        <email>roy.arends@icann.org</email>
       </address>
     </author>
 
